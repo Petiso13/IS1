@@ -1,0 +1,35 @@
+
+
+----SNAPSHOT----(25 March 2019 20:59:31) Cuis5.0-3685-01-Semaforo.image priorSource: 11814479!
+
+----End fileIn of /home/ayra/Downloads/DenotativeObjectMorph class-writeCollaboratorsInitializationOn.st----!
+!LuzAmarilla class methodsFor: 'as yet unclassified' stamp: 'LF 3/25/2019 21:02:37'!
+initializeCollaboratorsFromFile
+	"Auto generated method for loading purposes - Do not modify it"
+
+	morph := nil.! !
+!LuzRoja class methodsFor: 'as yet unclassified' stamp: 'LF 3/25/2019 21:02:37'!
+initializeCollaboratorsFromFile
+	"Auto generated method for loading purposes - Do not modify it"
+
+	morph := nil.! !
+!LuzVerde class methodsFor: 'as yet unclassified' stamp: 'LF 3/25/2019 21:02:37'!
+initializeCollaboratorsFromFile
+	"Auto generated method for loading purposes - Do not modify it"
+
+	morph := nil.! !
+!Semaforo class methodsFor: 'as yet unclassified' stamp: 'LF 3/25/2019 21:02:37'!
+initializeCollaboratorsFromFile
+	"Auto generated method for loading purposes - Do not modify it"
+
+	morph := nil.! !
+
+LuzAmarilla class removeSelector: #initializeCollaboratorsFromFile!
+
+LuzRoja class removeSelector: #initializeCollaboratorsFromFile!
+
+LuzVerde class removeSelector: #initializeCollaboratorsFromFile!
+
+Semaforo class removeSelector: #initializeCollaboratorsFromFile!
+
+----QUIT----(25 March 2019 21:56:13) Cuis5.0-3685-01-Semaforo.image priorSource: 11814563!
