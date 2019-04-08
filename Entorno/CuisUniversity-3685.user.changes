@@ -14841,3 +14841,34 @@ for: aClosure on: aMessage assert: anAssertion and: anotherAssertion
 			self assert: anotherAssertion ].
 		
 ! !
+
+
+
+----STARTUP---- (7 April 2019 21:53:36) as /home/ayra/Documents/Materias DC/IS1/Repositorio/IS1/Entorno/CuisUniversity-3685.image!
+
+
+----End fileIn of /home/ayra/Documents/Materias DC/IS1/Repositorio/IS1/CodigoRepetido-Ejercicio.st----!
+
+
+CustomerBookTest removeSelector: #assertClosure:runsFasterThan:!
+
+CustomerBookTest removeSelector: #assertNumberOfTotalCustomersIs:numberOfActiveCustomersIs:numberOfSuspendedCustomersIs:in:!
+
+CustomerBookTest removeSelector: #for:on:assert:and:!
+
+CustomerBookTest removeSelector: #for:on:do:!
+
+
+Smalltalk removeClassNamed: #CustomerBook!
+
+Smalltalk removeClassNamed: #CustomerBookTest!
+
+Smalltalk removeClassNamed: #NotFound!
+
+Smalltalk removeClassNamed: #CantSuspend!
+
+----End fileIn of /home/ayra/Downloads/DenotativeObjectMorph class-writeCollaboratorsInitializationOn(1).st----!
+
+----End fileIn of /home/ayra/Documents/Materias DC/IS1/Repositorio/IS1/CodigoRepetido-Ejercicio.st----!
+
+----End fileIn of /home/ayra/Documents/Materias DC/IS1/Repositorio/IS1/Entorno/CustomerBookTest.st----!
