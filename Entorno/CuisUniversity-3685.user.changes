@@ -14872,3 +14872,147 @@ Smalltalk removeClassNamed: #CantSuspend!
 ----End fileIn of /home/ayra/Documents/Materias DC/IS1/Repositorio/IS1/CodigoRepetido-Ejercicio.st----!
 
 ----End fileIn of /home/ayra/Documents/Materias DC/IS1/Repositorio/IS1/Entorno/CustomerBookTest.st----!
+
+----SNAPSHOT----(7 April 2019 22:06:05) CuisUniversity-3685.image priorSource: 12198576!
+
+----STARTUP---- (8 April 2019 16:52:17) as /home/ayra/Documents/Materias DC/IS1/Repositorio/IS1/Entorno/CuisUniversity-3685.image!
+
+
+----End fileIn of /home/ayra/Documents/Materias DC/IS1/Repositorio/IS1/2019-1c/22-Números/Ejercicio/Numero-Exercise.st----!
+!NumeroTest methodsFor: 'tests' stamp: 'lf 4/8/2019 21:25:50' prior: 50713736!
+test11EnteroAddsFraccionCorrectly
+"
+	Ahora empieza la diversion!!
+"
+
+	self assert: one + oneFifth equals: (Entero with: 6) / (Entero with: 5)! !
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/8/2019 21:33:44' prior: 50714031!
++ anAdder 
+	|var|
+	
+	var := self class with: value.
+	anAdder className = Fraccion ifTrue: (Fraccion class with: value).
+	
+	^var + anAdder integerValue
+! !
+!Entero methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 23:13' prior: 50714259!
++ anAdder 
+	
+	^self class with: value + anAdder integerValue
+! !
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/8/2019 21:41:55' prior: 50714267!
++ anAdder 
+	
+	anAdder className = Entero ifTrue: [^self class with: value + anAdder integerValue].
+	^self class with: value + anAdder integerValue
+! !
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/8/2019 21:46:06' prior: 50714272!
++ anAdder 
+	
+	|EnteroAFraccion|
+	
+	anAdder className = Entero ifTrue: [^self class with: value + anAdder integerValue].
+	
+	EnteroAFraccion := (Fraccion initializeWith: (anAdder denominator * self value) over: anAdder denominator) .
+	
+	^EnteroAFraccion + anAdder integerValue.
+! !
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/8/2019 21:47:22' prior: 50714280!
++ anAdder 
+	
+	|EnteroAFraccion|
+	
+	anAdder className = Entero ifTrue: [^self class with: value + anAdder integerValue].
+	
+	EnteroAFraccion := (Fraccion initializeWith: (anAdder denominator * self value) over: anAdder denominator) .
+	
+	^EnteroAFraccion + anAdder.
+! !
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/8/2019 21:48:32' prior: 50714292!
++ anAdder 
+	
+	|EnteroAFraccion|
+	
+	anAdder class = Entero ifTrue: [^self class with: value + anAdder integerValue].
+	
+	EnteroAFraccion := (Fraccion initializeWith: (anAdder denominator * self value) over: anAdder denominator) .
+	
+	^EnteroAFraccion + anAdder.
+! !
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/8/2019 21:49:21' prior: 50714304!
++ anAdder 
+	
+	|EnteroAFraccion|
+	
+	anAdder class = Entero ifTrue: [^self class with: value + anAdder integerValue].
+	
+	EnteroAFraccion := (anAdder denominator * self value)/ anAdder denominator.
+	
+	^EnteroAFraccion + anAdder.
+! !
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/8/2019 21:49:24' prior: 50714316!
++ anAdder 
+	
+	|EnteroAFraccion|
+	
+	anAdder class = Entero ifTrue: [^self class with: value + anAdder integerValue].
+	
+	EnteroAFraccion := (anAdder denominator * self value) / anAdder denominator.
+	
+	^EnteroAFraccion + anAdder.
+! !
+
+	^EnteroAFraccion + anAdder.!
+
+	^EnteroAFraccion + anAdder.!
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/8/2019 21:51:14' prior: 50714327!
++ anAdder 
+	
+	|EnteroAFraccion|
+	
+	anAdder class = Entero ifTrue: [^self class with: value + anAdder integerValue].
+	
+	EnteroAFraccion := (anAdder denominator * self value) / anAdder denominator.
+	
+	^anAdder + EnteroAFraccion .
+! !
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/8/2019 21:51:15' prior: 50714339!
++ anAdder 
+	
+	|EnteroAFraccion|
+	
+	anAdder class = Entero ifTrue: [^self class with: value + anAdder integerValue].
+	
+	EnteroAFraccion := (anAdder denominator * self value) / anAdder denominator.
+	
+	^anAdder + EnteroAFraccion.
+! !
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/8/2019 21:52:43' prior: 50714350!
++ anAdder 
+	
+	||
+	
+	anAdder class = Entero ifTrue: [^self class with: value + anAdder integerValue].
+	
+	^(anAdder denominator * self value + anAdder numerator) / anAdder denominator.
+! !
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/8/2019 21:52:59' prior: 50714361!
++ anAdder 
+
+	anAdder class = Entero ifTrue: [^self class with: value + anAdder integerValue].
+	
+	^(anAdder denominator * self value + anAdder numerator) / anAdder denominator.
+! !
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'lf 4/8/2019 21:57:28' prior: 50714144!
++ anAdder 
+	
+	| newNumerator newDenominator |
+
+	anAdder class = Entero ifTrue: [^anAdder + self].
+		
+	newNumerator := (numerator * anAdder denominator) + (denominator * anAdder numerator).
+	newDenominator := denominator * anAdder denominator.
+	
+	^newNumerator / newDenominator ! !
+
+----SNAPSHOT----(8 April 2019 22:01:33) CuisUniversity-3685.image priorSource: 12223848!
