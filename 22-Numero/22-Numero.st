@@ -324,6 +324,16 @@ negated
 	
 	^self * (Entero with: -1)! !
 
+!Numero methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:05:51'!
+sumarEntero: anAdder
+
+	self subclassResponsibility ! !
+
+!Numero methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:05:56'!
+sumarFraccion: anAdder
+
+	self subclassResponsibility ! !
+
 
 !Numero methodsFor: 'testing' stamp: 'NR 9/23/2018 23:36:49'!
 isNegative
@@ -363,42 +373,50 @@ Numero subclass: #Entero
 	poolDictionaries: ''
 	category: 'Numero-Exercise'!
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'ic 4/10/2019 21:42:01'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/15/2019 13:38:49'!
 * aMultiplier 
-	
-	"^self class with: value * aMultiplier integerValue"
-	
-	aMultiplier class = Entero ifTrue:[^self class with: value * aMultiplier integerValue].
-	^Fraccion with: self value * aMultiplier numerator over: aMultiplier denominator. ! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'ic 4/10/2019 21:40:07'!
-+ anAdder 
-
-	anAdder class = Entero ifTrue: [^self class with: value + anAdder integerValue].
-	
-	^Fraccion with: anAdder denominator * self value + anAdder numerator over: anAdder denominator.
+	^aMultiplier multiplicarEntero: self.
 ! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'ic 4/10/2019 22:11:12'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:06:28'!
++ anAdder 
+	
+	^anAdder sumarEntero: self.
+	! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/15/2019 13:38:57'!
 - aSubtrahend 
 	
-	"^ self class with: value - aSubtrahend integerValue."
-	
-	aSubtrahend class = Entero ifTrue: [^ self class with: value - aSubtrahend integerValue].
-	^ Fraccion with: self * aSubtrahend denominator - aSubtrahend numerator over: aSubtrahend denominator. ! !
+	^aSubtrahend restarleAEntero: self.! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'ic 4/10/2019 21:10:05'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/15/2019 13:39:03'!
 / aDivisor 
-	
-	"^Fraccion with: self over: aDivisor"
-	
-	aDivisor class = Entero ifTrue: [^Fraccion with: self over: aDivisor].
-	^Fraccion with: self * aDivisor denominator over: aDivisor numerator.! !
+
+	^aDivisor dividirAEntero: self.! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 21:55'!
 // aDivisor 
 	
 	^self class with: value // aDivisor integerValue! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:42:29'!
+dividirAEntero: numero 
+	
+	^Fraccion with: numero over: self.
+"	
+	aDivisor class = Entero ifTrue: [^Fraccion with: self over: aDivisor].
+	^Fraccion with: self * aDivisor denominator over: aDivisor numerator.
+"! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:42:14'!
+dividirAFraccion: numero 
+
+	^Fraccion with: numero numerator over: self * numero denominator.	
+"	
+	aDivisor class = Entero ifTrue: [^Fraccion with: self over: aDivisor].
+	^Fraccion with: self * aDivisor denominator over: aDivisor numerator.
+"! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'HAW 9/24/2018 08:47:50'!
 fibonacci
@@ -418,6 +436,48 @@ fibonacci
 greatestCommonDivisorWith: anEntero 
 	
 	^self class with: (value gcd: anEntero integerValue)! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:27:58'!
+multiplicarEntero: aMultiplier 
+
+	^self class with: value * aMultiplier integerValue! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:28:08'!
+multiplicarFraccion: aMultiplier 
+	
+	^Fraccion with: self value * aMultiplier numerator over: aMultiplier denominator. ! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 21:04:43'!
+restarleAEntero: numero 
+
+	^numero class with: numero integerValue - self integerValue.
+	
+"
+	aSubtrahend class = Entero ifTrue: [^ self class with: value - aSubtrahend integerValue].
+	^ Fraccion with: self * aSubtrahend denominator - aSubtrahend numerator over: aSubtrahend denominator. 	
+"! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:55:01'!
+restarleAFraccion: numero 
+
+	^Fraccion with: numero numerator - (self * numero denominator) over: numero denominator.
+
+"	
+	aSubtrahend class = Entero ifTrue: [^ self class with: value - aSubtrahend integerValue].
+	^ Fraccion with: self * aSubtrahend denominator - aSubtrahend numerator over: aSubtrahend denominator. 
+"! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:03:11'!
+sumarEntero: anAdder 
+
+	^self class with: value + anAdder integerValue.
+	! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:03:34'!
+sumarFraccion: anAdder 
+
+	^Fraccion with: anAdder denominator * self value + anAdder numerator over: anAdder denominator.
+! !
 
 
 !Entero methodsFor: 'comparing' stamp: 'HernanWilkinson 5/7/2016 21:01'!
@@ -492,52 +552,112 @@ Numero subclass: #Fraccion
 	poolDictionaries: ''
 	category: 'Numero-Exercise'!
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'ic 4/10/2019 20:59:37'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'lf 4/15/2019 13:38:41'!
 * aMultiplier 
+
+	^aMultiplier multiplicarFraccion: self.	
+! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:09:37'!
++ anAdder 
 	
-	"^(numerator * aMultiplier numerator) / (denominator * aMultiplier denominator)"
+	^anAdder sumarFraccion: self.! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'lf 4/15/2019 13:38:22'!
+- aSubtrahend 
+
+	^aSubtrahend restarleAFraccion: self. ! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'lf 4/15/2019 13:38:30'!
+/ aDivisor 
+
+	^aDivisor dividirAFraccion: self.! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:40:33'!
+dividirAEntero: entero 
 	
-	aMultiplier class = Entero ifTrue: [^aMultiplier * self].
+	^Fraccion with:denominator * entero over: numerator
+"
+	aDivisor class = Entero ifTrue: [^Fraccion with:numerator over: denominator * aDivisor ].
+	^(numerator * aDivisor denominator) / (denominator * aDivisor numerator).
+"! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:41:01'!
+dividirAFraccion: fraccion 
+
+	^(fraccion numerator * denominator) / (fraccion denominator * numerator).
+"
+	aDivisor class = Entero ifTrue: [^Fraccion with:numerator over: denominator * aDivisor ].
+	^(numerator * aDivisor denominator) / (denominator * aDivisor numerator).
+"! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:31:54'!
+multiplicarEntero: aMultiplier 
+	
+	^Fraccion with: aMultiplier value * self numerator over: self denominator. 
+
+	! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:29:10'!
+multiplicarFraccion: aMultiplier 
+
 	^(numerator * aMultiplier numerator) / (denominator * aMultiplier denominator).
 
 	! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'lf 4/8/2019 21:57:28'!
-+ anAdder 
-	
-	| newNumerator newDenominator |
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:53:15'!
+restarleAEntero: numero 
 
-	anAdder class = Entero ifTrue: [^anAdder + self].
-		
-	newNumerator := (numerator * anAdder denominator) + (denominator * anAdder numerator).
-	newDenominator := denominator * anAdder denominator.
-	
-	^newNumerator / newDenominator ! !
+	^ Fraccion with: numero * denominator - numerator over: denominator. 
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'ic 4/10/2019 22:20:44'!
-- aSubtrahend 
-	
+"	
 	| newNumerator newDenominator |
-	
-	"newNumerator := (numerator * aSubtrahend denominator) - (denominator * aSubtrahend numerator).
-	newDenominator := denominator * aSubtrahend denominator.
-	
-	^newNumerator / newDenominator "
-	
 	
 	aSubtrahend class  = Entero ifTrue: [^Fraccion with: numerator - (aSubtrahend * denominator) over: denominator ].
 	newNumerator := (numerator * aSubtrahend denominator) - (denominator * aSubtrahend numerator).
 	newDenominator := denominator * aSubtrahend denominator.
 	
-	^newNumerator / newDenominator! !
+	^newNumerator / newDenominator
+	
+"! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'ic 4/10/2019 21:14:42'!
-/ aDivisor 
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:52:10'!
+restarleAFraccion: numero 
 	
-	"^(numerator * aDivisor denominator) / (denominator * aDivisor numerator)"
+	| newNumerator newDenominator |
+
+	newNumerator := (numero numerator * denominator) - (numero denominator * numerator).
+	newDenominator := numero denominator * denominator.
 	
-	aDivisor class = Entero ifTrue: [^Fraccion with:numerator over: denominator * aDivisor ].
-	^(numerator * aDivisor denominator) / (denominator * aDivisor numerator).! !
+	^newNumerator / newDenominator
+
+
+"	
+	| newNumerator newDenominator |
+	
+	aSubtrahend class  = Entero ifTrue: [^Fraccion with: numerator - (aSubtrahend * denominator) over: denominator ].
+	newNumerator := (numerator * aSubtrahend denominator) - (denominator * aSubtrahend numerator).
+	newDenominator := denominator * aSubtrahend denominator.
+	
+	^newNumerator / newDenominator
+	
+"! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:11:29'!
+sumarEntero: anAdder 
+
+	^Fraccion with: self denominator * anAdder value + self numerator over: self denominator.
+! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'lf 4/11/2019 20:04:31'!
+sumarFraccion: anAdder 
+	
+	| newNumerator newDenominator |
+
+	newNumerator := (numerator * anAdder denominator) + (denominator * anAdder numerator).
+	newDenominator := denominator * anAdder denominator.
+	
+	^newNumerator / newDenominator ! !
 
 
 !Fraccion methodsFor: 'comparing' stamp: 'HernanWilkinson 5/7/2016 20:42'!
