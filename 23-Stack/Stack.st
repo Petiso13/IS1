@@ -139,22 +139,63 @@ test10CanNotTopWhenThereAreNoObjectsInTheStack
 
 !classDefinition: #SentenceFinderByPrefixTest category: #'Stack-Exercise'!
 TestCase subclass: #SentenceFinderByPrefixTest
-	instanceVariableNames: ''
+	instanceVariableNames: 'testStack testFinder'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 03:17:30'!
-test01SearchForValidPrefixInEmptyStackReturnsNotFoundMessage! !
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 18:08:00'!
+setUp
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 03:10:45'!
-test02CannotSearchForEmptyPrefix! !
+	testStack := OOStack new.
+	testFinder := SentenceFinderByPrefix with: testStack. ! !
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 03:11:06'!
-test03CannotSearchForPrefixWithASpace! !
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/21/2019 00:13:41'!
+test01SearchForValidPrefixInEmptyStackReturnsNotFoundMessage
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 03:15:39'!
-test04SearchWithNoHitsReturnsNotFoundMessage! !
+	| validPrefix|
+	
+	validPrefix := 'asdf'.
+		
+	self assert: (testFinder find: validPrefix) equals: (SentenceFinderByPrefix noHitsMessagewith: validPrefix).	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 19:16:08'!
+test02CannotSearchForEmptyPrefix
+
+	| emptyPrefix|
+	
+	emptyPrefix := ''.
+	
+	self 
+		should: [testFinder find: emptyPrefix]
+		raise: Error
+		withExceptionDo: [ :anError | self assert: anError messageText equals: SentenceFinderByPrefix cannotSearchForEmptyPrefixErrorDescription].
+	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 19:23:00'!
+test03CannotSearchForPrefixWithASpace
+
+	| prefixWithSpaces |
+	
+	prefixWithSpaces := 'Winter is here'.
+	
+	self 
+		should: [testFinder find: prefixWithSpaces ]
+		raise: Error
+		withExceptionDo: [ :anError | self assert: anError messageText equals: SentenceFinderByPrefix cannotSearchForPrefixWithSpacesErrorDescription ].
+	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 23:23:49'!
+test04SearchWithNoHitsReturnsNotFoundMessage
+
+	| aSentence aPrefix|
+
+	self setUp.
+	aSentence := 'I like cheeeeese'.
+	aPrefix := 'like'.
+	
+	testStack push: aSentence. 	
+	self assert: (testFinder find: aPrefix) equals: (SentenceFinderByPrefix noHitsMessagewith: aPrefix).! !
 
 !SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 03:14:15'!
 test05SearchWithNoHitsDoesntModifyStack! !
@@ -178,124 +219,48 @@ test10SearchIsCaseSensitive! !
 test11SentencesBeginningWithSpacesAreAlsoHits! !
 
 
-!classDefinition: #ElementoDelStack category: #'Stack-Exercise'!
-Object subclass: #ElementoDelStack
-	instanceVariableNames: 'stackContenedor'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Stack-Exercise'!
-
-!ElementoDelStack methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 01:50:33'!
-initializeWith: aStack
-
-	stackContenedor := aStack.! !
-
-!ElementoDelStack methodsFor: 'as yet unclassified' stamp: 'lf 4/19/2019 01:26:19'!
-removerDelStack
-
-	self subclassResponsibility ! !
-
-!ElementoDelStack methodsFor: 'as yet unclassified' stamp: 'lf 4/19/2019 01:26:09'!
-valorDelElemento
-
-	self subclassResponsibility ! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'ElementoDelStack class' category: #'Stack-Exercise'!
-ElementoDelStack class
-	instanceVariableNames: ''!
-
-!ElementoDelStack class methodsFor: 'as yet unclassified' stamp: 'lf 4/19/2019 01:33:52'!
-with: aStack 
-	
-	^self new initializeWith: aStack.! !
-
-
-!classDefinition: #ElementoDelStackConContenido category: #'Stack-Exercise'!
-ElementoDelStack subclass: #ElementoDelStackConContenido
-	instanceVariableNames: 'contenido'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Stack-Exercise'!
-
-!ElementoDelStackConContenido methodsFor: 'as yet unclassified' stamp: 'lf 4/19/2019 01:22:14'!
-asignarContenido: contenidoAAsignar
-
-	contenido := contenidoAAsignar.! !
-
-!ElementoDelStackConContenido methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 02:06:00'!
-removerDelStack
-
-	stackContenedor removeLast.
-	^contenido! !
-
-!ElementoDelStackConContenido methodsFor: 'as yet unclassified' stamp: 'lf 4/19/2019 01:26:45'!
-valorDelElemento
-
-	^contenido.! !
-
-
-!classDefinition: #ElementoDelStackVacio category: #'Stack-Exercise'!
-ElementoDelStack subclass: #ElementoDelStackVacio
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Stack-Exercise'!
-
-!ElementoDelStackVacio methodsFor: 'as yet unclassified' stamp: 'lf 4/19/2019 01:37:05'!
-removerDelStack
-
-	self error: OOStack stackEmptyErrorDescription.! !
-
-!ElementoDelStackVacio methodsFor: 'as yet unclassified' stamp: 'lf 4/19/2019 01:37:16'!
-valorDelElemento
-
-	self error: OOStack stackEmptyErrorDescription.! !
-
-
 !classDefinition: #OOStack category: #'Stack-Exercise'!
 Object subclass: #OOStack
-	instanceVariableNames: 'coleccion'
+	instanceVariableNames: 'colection'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'lf 4/19/2019 01:39:12'!
+!OOStack methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:36:08'!
 initialize
 
-	coleccion := OrderedCollection new.
-	coleccion addLast: (ElementoDelStackVacio with: coleccion).! !
+	colection := OrderedCollection new.
+	colection addLast: (StackElementValueless with: colection).! !
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'lf 4/19/2019 01:32:15'!
+!OOStack methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:36:24'!
 isEmpty
 
-	^coleccion size =1.! !
+	^colection size =1.! !
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'lf 4/19/2019 01:29:57'!
+!OOStack methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:47:03'!
 pop
-	|valorDelElementoARemover|
-	valorDelElementoARemover := self top.
-	coleccion last removerDelStack.
-	^valorDelElementoARemover.! !
+	|elementToRemove|
+	elementToRemove := self top.
+	colection last removeFromStack.
+	^elementToRemove.! !
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'lf 4/19/2019 01:39:37'!
-push: object
+!OOStack methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:47:42'!
+push: anObject
 
-	|ElementoAAgregar|
-	ElementoAAgregar := ElementoDelStackConContenido with: coleccion.
-	ElementoAAgregar asignarContenido: object.
-	coleccion addLast: ElementoAAgregar.! !
+	|elementToAdd|
+	elementToAdd := StackElementWithValue with: colection.
+	elementToAdd assignContent: anObject.
+	colection addLast: elementToAdd.! !
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'lf 4/19/2019 01:30:12'!
+!OOStack methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:37:38'!
 size
 
-	 ^coleccion size - 1.! !
+	 ^colection size - 1.! !
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'lf 4/19/2019 01:25:34'!
+!OOStack methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:37:49'!
 top
 
-	^coleccion last valorDelElemento.! !
+	^colection last elementValue.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -311,20 +276,50 @@ stackEmptyErrorDescription
 
 !classDefinition: #SentenceFinderByPrefix category: #'Stack-Exercise'!
 Object subclass: #SentenceFinderByPrefix
-	instanceVariableNames: 'stackDondeBuscar'
+	instanceVariableNames: 'stackToSearchIn'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 02:26:16'!
-find: prefijoDeOracionesABuscar
+!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 20:53:52'!
+checkValidityOfPrefix: prefixToSearchFor
+	| spaceChar |
 
+	spaceChar := $ .
+
+	prefixToSearchFor isEmpty ifTrue: [self error: SentenceFinderByPrefix cannotSearchForEmptyPrefixErrorDescription].
+	(prefixToSearchFor allSatisfy: [:char | char ~= spaceChar]) ifFalse: [self error: SentenceFinderByPrefix cannotSearchForPrefixWithSpacesErrorDescription].
+	
+	
 	! !
 
-!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 02:18:31'!
+!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'ic 4/21/2019 00:15:06'!
+find: prefixToSearchFor
+
+	| sentencesToReturn auxStack stringToCompare|
+
+	self checkValidityOfPrefix: prefixToSearchFor .
+	stackToSearchIn isEmpty ifTrue: [^SentenceFinderByPrefix noHitsMessagewith: prefixToSearchFor ].
+	
+	sentencesToReturn := OrderedCollection new.
+	auxStack := OOStack new.
+	
+	[stackToSearchIn isEmpty] whileFalse: [
+		stringToCompare := stackToSearchIn top copyFrom:1 to:prefixToSearchFor size.
+		stringToCompare = prefixToSearchFor ifTrue: [sentencesToReturn addLast: (stackToSearchIn top copyFrom: 1 to: stackToSearchIn top size)].
+		auxStack push: stackToSearchIn pop].
+	
+	[auxStack isEmpty] whileFalse: [stackToSearchIn push: auxStack pop].
+	
+	sentencesToReturn isEmpty ifTrue: [^SentenceFinderByPrefix noHitsMessagewith: prefixToSearchFor].
+
+	
+	! !
+
+!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 20:55:09'!
 initializeWith: aStack
 
-	stackDondeBuscar := aStack. ! !
+	stackToSearchIn := aStack. ! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -332,9 +327,100 @@ initializeWith: aStack
 SentenceFinderByPrefix class
 	instanceVariableNames: ''!
 
+!SentenceFinderByPrefix class methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 18:25:53'!
+cannotSearchForEmptyPrefixErrorDescription
+
+	^'Please enter a prefix'.! !
+
+!SentenceFinderByPrefix class methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 18:26:32'!
+cannotSearchForPrefixWithSpacesErrorDescription
+
+	^ 'Prefix must not contain spaces'.! !
+
+!SentenceFinderByPrefix class methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 23:20:16'!
+noHitsMessagewith: aPrefix
+
+	^ 'No sentences beginning with ', aPrefix, ' found.' .! !
+
 !SentenceFinderByPrefix class methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 02:16:54'!
 with: aStack
 
 	^self new initializeWith: aStack. 
 
  ! !
+
+
+!classDefinition: #StackElement category: #'Stack-Exercise'!
+Object subclass: #StackElement
+	instanceVariableNames: 'stackContainer'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!StackElement methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:25:52'!
+elementValue
+
+	self subclassResponsibility ! !
+
+!StackElement methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:25:13'!
+initializeWith: aStack
+
+	stackContainer := aStack.! !
+
+!StackElement methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:25:32'!
+removeFromStack
+
+	self subclassResponsibility ! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'StackElement class' category: #'Stack-Exercise'!
+StackElement class
+	instanceVariableNames: ''!
+
+!StackElement class methodsFor: 'as yet unclassified' stamp: 'lf 4/19/2019 01:33:52'!
+with: aStack 
+	
+	^self new initializeWith: aStack.! !
+
+
+!classDefinition: #StackElementValueless category: #'Stack-Exercise'!
+StackElement subclass: #StackElementValueless
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!StackElementValueless methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:18:55'!
+elementValue
+
+	self error: OOStack stackEmptyErrorDescription.! !
+
+!StackElementValueless methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:20:12'!
+removeFromStack
+
+	self error: OOStack stackEmptyErrorDescription.! !
+
+
+!classDefinition: #StackElementWithValue category: #'Stack-Exercise'!
+StackElement subclass: #StackElementWithValue
+	instanceVariableNames: 'content'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!StackElementWithValue methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:30:30'!
+assignContent: contentToAssign
+
+	content := contentToAssign.! !
+
+!StackElementWithValue methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:32:47'!
+elementValue
+
+	^content.! !
+
+!StackElementWithValue methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:49:56'!
+removeFromStack
+
+	stackContainer removeLast.
+	! !
