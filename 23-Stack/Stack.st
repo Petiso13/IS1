@@ -144,20 +144,20 @@ TestCase subclass: #SentenceFinderByPrefixTest
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 18:08:00'!
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'lf 4/21/2019 00:35:01'!
 setUp
 
 	testStack := OOStack new.
-	testFinder := SentenceFinderByPrefix with: testStack. ! !
+	testFinder := SentenceFinderByPrefix with: testStack.! !
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/21/2019 00:13:41'!
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'lf 4/21/2019 00:36:26'!
 test01SearchForValidPrefixInEmptyStackReturnsNotFoundMessage
 
 	| validPrefix|
 	
 	validPrefix := 'asdf'.
 		
-	self assert: (testFinder find: validPrefix) equals: (SentenceFinderByPrefix noHitsMessagewith: validPrefix).	! !
+	self assert: (testFinder find: validPrefix) equals: (SentenceFinderByPrefix noHitsMessageWith: validPrefix).	! !
 
 !SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 19:16:08'!
 test02CannotSearchForEmptyPrefix
@@ -185,7 +185,7 @@ test03CannotSearchForPrefixWithASpace
 		withExceptionDo: [ :anError | self assert: anError messageText equals: SentenceFinderByPrefix cannotSearchForPrefixWithSpacesErrorDescription ].
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 23:23:49'!
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'lf 4/21/2019 00:36:33'!
 test04SearchWithNoHitsReturnsNotFoundMessage
 
 	| aSentence aPrefix|
@@ -195,28 +195,154 @@ test04SearchWithNoHitsReturnsNotFoundMessage
 	aPrefix := 'like'.
 	
 	testStack push: aSentence. 	
-	self assert: (testFinder find: aPrefix) equals: (SentenceFinderByPrefix noHitsMessagewith: aPrefix).! !
+	self assert: (testFinder find: aPrefix) equals: (SentenceFinderByPrefix noHitsMessageWith: aPrefix).! !
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 03:14:15'!
-test05SearchWithNoHitsDoesntModifyStack! !
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/21/2019 02:51:37'!
+test05SearchWithNoHitsDoesntModifyStack
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 03:19:47'!
-test06SearchWithOneHitReturnsSentence! !
+	| aSentence aPrefix|
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 03:20:26'!
-test07SearchWithOneHitDoesntModifyStack! !
+	self setUp.
+	aSentence := 'I like cheeeeese'.
+	aPrefix := 'like'.
+	
+	testStack push: aSentence.
+	testFinder find: aPrefix.
+	. 
+	self assert: testStack top equals: aSentence.! !
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 03:22:39'!
-test08SearchWithMultipleHitsReturnsAllSentences! !
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/21/2019 02:56:25'!
+test06SearchWithOneHitReturnsSentence
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 03:21:29'!
-test09SearchWithMultipleHitsDoesntModifyStack! !
+	| aSentence aPrefix searchResult|
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 03:24:39'!
-test10SearchIsCaseSensitive! !
+	self setUp.
+	aSentence := 'Dont you cry'.
+	aPrefix := 'Do'.
+	
+	testStack push: aSentence.
+	searchResult := testFinder find: aPrefix.
+	. 
+	self assert: searchResult last equals: aSentence.! !
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 03:47:41'!
-test11SentencesBeginningWithSpacesAreAlsoHits! !
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/21/2019 02:58:00'!
+test07SearchWithOneHitDoesntModifyStack
+
+	| aSentence aPrefix|
+
+	self setUp.
+	aSentence := 'Dont you cry'.
+	aPrefix := 'Dont'.
+	
+	testStack push: aSentence.
+	testFinder find: aPrefix.
+	. 
+	self assert: testStack top equals: aSentence.! !
+
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/21/2019 03:19:13'!
+test08SearchWithMultipleHitsReturnsAllSentences
+
+	| aSentence anotherSentence aThirdSentence aPrefix searchResult|
+
+	self setUp.
+	aSentence := 'Dont you cry'.
+	anotherSentence := 'Doesnt matter'.
+	aThirdSentence := 'Wayward Son'.
+	aPrefix := 'Do'.
+	
+	testStack push: aSentence.
+	testStack push: anotherSentence.
+	testStack push: aThirdSentence.
+	searchResult := testFinder find: aPrefix.
+	. 
+	self assert: searchResult last equals: aSentence.
+	searchResult removeLast.
+	self assert: searchResult last equals: anotherSentence.
+	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/21/2019 03:27:40'!
+test09SearchWithMultipleHitsDoesntModifyStack
+
+	| aSentence anotherSentence aThirdSentence aPrefix|
+
+	self setUp.
+	aSentence := 'Dont you cry'.
+	anotherSentence := 'Doesnt matter'.
+	aThirdSentence := 'Wayward Son'.
+	aPrefix := 'Do'.
+	
+	testStack push: aSentence.
+	testStack push: anotherSentence.
+	testStack push: aThirdSentence.
+	
+	testFinder find: aPrefix.
+	
+	self assert: testStack top equals: aThirdSentence.
+	testStack pop.
+	self assert: testStack top equals: anotherSentence.
+	testStack pop.
+	self assert: testStack top equals: aSentence.
+	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/21/2019 03:30:11'!
+test10SearchIsCaseSensitive
+
+	| aSentence anotherSentence aThirdSentence aPrefix searchResult|
+
+	self setUp.
+	aSentence := 'Dont you cry'.
+	anotherSentence := 'doesnt matter'.
+	aThirdSentence := 'Wayward Son'.
+	aPrefix := 'Do'.
+	
+	testStack push: aSentence.
+	testStack push: anotherSentence.
+	testStack push: aThirdSentence.
+	searchResult := testFinder find: aPrefix.
+	. 
+	self assert: searchResult last equals: aSentence.
+	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/21/2019 15:53:22'!
+test11SentencesBeginningWithSpacesAreAlsoHits
+
+	| aSentence anotherSentence aThirdSentence aPrefix searchResult |
+
+	self setUp.
+	aSentence := 'Dont you cry'.
+	anotherSentence := '   Doesnt matter'.
+	aThirdSentence := 'Wayward Son'.
+	aPrefix := 'Do'.
+	
+	testStack push: aSentence.
+	testStack push: anotherSentence.
+	testStack push: aThirdSentence.
+	
+	searchResult := testFinder find: aPrefix.
+	
+	self assert: searchResult size equals: 2. 
+	self assert: searchResult last equals: aSentence.
+	self assert: searchResult first equals: anotherSentence.! !
+
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'ic 4/21/2019 03:44:52'!
+test12PrefixCanBeLongerThanSentences
+
+	| aSentence anotherSentence aThirdSentence aPrefix searchResult|
+
+	self setUp.
+	aSentence := 'Dont'.
+	anotherSentence := 'doe'.
+	aThirdSentence := 'Dontcha know it?'.
+	aPrefix := 'Dontcha'.
+	
+	testStack push: aSentence.
+	testStack push: anotherSentence.
+	testStack push: aThirdSentence.
+	searchResult := testFinder find: aPrefix.
+	. 
+	self assert: searchResult last equals: aThirdSentence.
+
+! !
 
 
 !classDefinition: #OOStack category: #'Stack-Exercise'!
@@ -266,7 +392,7 @@ top
 
 !classDefinition: 'OOStack class' category: #'Stack-Exercise'!
 OOStack class
-	instanceVariableNames: 'coleccion'!
+	instanceVariableNames: ''!
 
 !OOStack class methodsFor: 'error descriptions' stamp: 'HernanWilkinson 5/7/2012 11:51'!
 stackEmptyErrorDescription
@@ -293,25 +419,31 @@ checkValidityOfPrefix: prefixToSearchFor
 	
 	! !
 
-!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'ic 4/21/2019 00:15:06'!
+!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'ic 4/21/2019 15:51:21'!
 find: prefixToSearchFor
 
 	| sentencesToReturn auxStack stringToCompare|
 
 	self checkValidityOfPrefix: prefixToSearchFor .
-	stackToSearchIn isEmpty ifTrue: [^SentenceFinderByPrefix noHitsMessagewith: prefixToSearchFor ].
+	stackToSearchIn isEmpty ifTrue: [^SentenceFinderByPrefix noHitsMessageWith: prefixToSearchFor ].
 	
 	sentencesToReturn := OrderedCollection new.
 	auxStack := OOStack new.
 	
 	[stackToSearchIn isEmpty] whileFalse: [
-		stringToCompare := stackToSearchIn top copyFrom:1 to:prefixToSearchFor size.
-		stringToCompare = prefixToSearchFor ifTrue: [sentencesToReturn addLast: (stackToSearchIn top copyFrom: 1 to: stackToSearchIn top size)].
-		auxStack push: stackToSearchIn pop].
+		(stackToSearchIn top size >= prefixToSearchFor size)ifTrue:[
+			stringToCompare := stackToSearchIn top.
+			stringToCompare := self removeSpacesAtTheBeginnigOf: stringToCompare.
+			stringToCompare := stringToCompare copyFrom: 1 to: prefixToSearchFor size.
+			stringToCompare = prefixToSearchFor ifTrue: [sentencesToReturn addLast: (stackToSearchIn top copyFrom: 1 to: stackToSearchIn top size)].			
+		].
+		auxStack push: stackToSearchIn pop.
+	].
 	
 	[auxStack isEmpty] whileFalse: [stackToSearchIn push: auxStack pop].
 	
-	sentencesToReturn isEmpty ifTrue: [^SentenceFinderByPrefix noHitsMessagewith: prefixToSearchFor].
+	sentencesToReturn isEmpty ifTrue: [^SentenceFinderByPrefix noHitsMessageWith: prefixToSearchFor].
+	^sentencesToReturn 
 
 	
 	! !
@@ -320,6 +452,21 @@ find: prefixToSearchFor
 initializeWith: aStack
 
 	stackToSearchIn := aStack. ! !
+
+!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'ic 4/21/2019 15:20:35'!
+removeSpacesAtTheBeginnigOf: aSentence
+
+	| firstCharPosition spaceChar return|
+	
+	firstCharPosition := 1.
+	spaceChar := $ .
+	
+	[(aSentence at: firstCharPosition) = spaceChar ] whileTrue:[
+		firstCharPosition := firstCharPosition + 1.].
+	
+	return := aSentence copyFrom: firstCharPosition to: aSentence size.
+	
+	 ^"firstCharPosition "return.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -336,6 +483,11 @@ cannotSearchForEmptyPrefixErrorDescription
 cannotSearchForPrefixWithSpacesErrorDescription
 
 	^ 'Prefix must not contain spaces'.! !
+
+!SentenceFinderByPrefix class methodsFor: 'as yet unclassified' stamp: 'lf 4/21/2019 00:35:42'!
+noHitsMessageWith: aPrefix
+
+	^ 'No sentences beginning with ', aPrefix, ' found.' .! !
 
 !SentenceFinderByPrefix class methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 23:20:16'!
 noHitsMessagewith: aPrefix
