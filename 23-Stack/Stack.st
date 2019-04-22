@@ -352,11 +352,11 @@ Object subclass: #OOStack
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:36:08'!
+!OOStack methodsFor: 'as yet unclassified' stamp: 'ic 4/22/2019 12:48:46'!
 initialize
 
 	colection := OrderedCollection new.
-	colection addLast: (StackElementValueless with: colection).! !
+	colection addLast: (OOStackElementValueless with: colection).! !
 
 !OOStack methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:36:24'!
 isEmpty
@@ -370,11 +370,11 @@ pop
 	colection last removeFromStack.
 	^elementToRemove.! !
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:47:42'!
+!OOStack methodsFor: 'as yet unclassified' stamp: 'ic 4/22/2019 12:49:27'!
 push: anObject
 
 	|elementToAdd|
-	elementToAdd := StackElementWithValue with: colection.
+	elementToAdd := OOStackElementWithValue with: colection.
 	elementToAdd assignContent: anObject.
 	colection addLast: elementToAdd.! !
 
@@ -398,6 +398,82 @@ OOStack class
 stackEmptyErrorDescription
 	
 	^ 'Stack is empty'! !
+
+
+!classDefinition: #OOStackElement category: #'Stack-Exercise'!
+Object subclass: #OOStackElement
+	instanceVariableNames: 'stackContainer'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!OOStackElement methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:25:52'!
+elementValue
+
+	self subclassResponsibility ! !
+
+!OOStackElement methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:25:13'!
+initializeWith: aStack
+
+	stackContainer := aStack.! !
+
+!OOStackElement methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:25:32'!
+removeFromStack
+
+	self subclassResponsibility ! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'OOStackElement class' category: #'Stack-Exercise'!
+OOStackElement class
+	instanceVariableNames: ''!
+
+!OOStackElement class methodsFor: 'as yet unclassified' stamp: 'lf 4/19/2019 01:33:52'!
+with: aStack 
+	
+	^self new initializeWith: aStack.! !
+
+
+!classDefinition: #OOStackElementValueless category: #'Stack-Exercise'!
+OOStackElement subclass: #OOStackElementValueless
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!OOStackElementValueless methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:18:55'!
+elementValue
+
+	self error: OOStack stackEmptyErrorDescription.! !
+
+!OOStackElementValueless methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:20:12'!
+removeFromStack
+
+	self error: OOStack stackEmptyErrorDescription.! !
+
+
+!classDefinition: #OOStackElementWithValue category: #'Stack-Exercise'!
+OOStackElement subclass: #OOStackElementWithValue
+	instanceVariableNames: 'content'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!OOStackElementWithValue methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:30:30'!
+assignContent: contentToAssign
+
+	content := contentToAssign.! !
+
+!OOStackElementWithValue methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:32:47'!
+elementValue
+
+	^content.! !
+
+!OOStackElementWithValue methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:49:56'!
+removeFromStack
+
+	stackContainer removeLast.
+	! !
 
 
 !classDefinition: #SentenceFinderByPrefix category: #'Stack-Exercise'!
@@ -500,79 +576,3 @@ with: aStack
 	^self new initializeWith: aStack. 
 
  ! !
-
-
-!classDefinition: #StackElement category: #'Stack-Exercise'!
-Object subclass: #StackElement
-	instanceVariableNames: 'stackContainer'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Stack-Exercise'!
-
-!StackElement methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:25:52'!
-elementValue
-
-	self subclassResponsibility ! !
-
-!StackElement methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:25:13'!
-initializeWith: aStack
-
-	stackContainer := aStack.! !
-
-!StackElement methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:25:32'!
-removeFromStack
-
-	self subclassResponsibility ! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'StackElement class' category: #'Stack-Exercise'!
-StackElement class
-	instanceVariableNames: ''!
-
-!StackElement class methodsFor: 'as yet unclassified' stamp: 'lf 4/19/2019 01:33:52'!
-with: aStack 
-	
-	^self new initializeWith: aStack.! !
-
-
-!classDefinition: #StackElementValueless category: #'Stack-Exercise'!
-StackElement subclass: #StackElementValueless
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Stack-Exercise'!
-
-!StackElementValueless methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:18:55'!
-elementValue
-
-	self error: OOStack stackEmptyErrorDescription.! !
-
-!StackElementValueless methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:20:12'!
-removeFromStack
-
-	self error: OOStack stackEmptyErrorDescription.! !
-
-
-!classDefinition: #StackElementWithValue category: #'Stack-Exercise'!
-StackElement subclass: #StackElementWithValue
-	instanceVariableNames: 'content'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Stack-Exercise'!
-
-!StackElementWithValue methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:30:30'!
-assignContent: contentToAssign
-
-	content := contentToAssign.! !
-
-!StackElementWithValue methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:32:47'!
-elementValue
-
-	^content.! !
-
-!StackElementWithValue methodsFor: 'as yet unclassified' stamp: 'ic 4/20/2019 21:49:56'!
-removeFromStack
-
-	stackContainer removeLast.
-	! !
