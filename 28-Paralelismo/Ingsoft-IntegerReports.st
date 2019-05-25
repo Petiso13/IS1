@@ -137,14 +137,20 @@ wait
 ! !
 
 
-!IntegerReport methodsFor: 'as yet unclassified' stamp: 'LF 5/19/2019 18:58:27'!
+!IntegerReport methodsFor: 'as yet unclassified' stamp: 'ic 5/20/2019 14:24:16'!
 CollectionOfPropertiesFrom: aClosureA and: aClosureB
 
-	| resultFromClosureA resultFromClosureB lines |
+	| resultFromClosureA resultFromClosureB lines processASemaphore processBSemaphore |
 	
 	lines := OrderedCollection new.
-	resultFromClosureA := aClosureA value.
-	resultFromClosureB := aClosureB value.
+	processASemaphore := Semaphore new.
+	processBSemaphore := Semaphore new.
+	
+	[resultFromClosureA := aClosureA value. processASemaphore signal] fork.
+	[resultFromClosureB := aClosureB value. processBSemaphore signal] fork.
+	
+	processASemaphore wait.
+	processBSemaphore wait.
 
 	lines 
 		addAll: resultFromClosureA;
@@ -229,12 +235,12 @@ IntegerReport subclass: #IntegerPropertiesReport
 	poolDictionaries: ''
 	category: 'Ingsoft-IntegerReports'!
 
-!IntegerPropertiesReport methodsFor: 'reporting - private' stamp: 'LF 5/19/2019 19:45:30'!
+!IntegerPropertiesReport methodsFor: 'reporting - private' stamp: 'ic 5/20/2019 14:14:26'!
 CollectionWithLines: aLineA and: aLineB and: aLineC
 
 	| lines |
 	
-	[self wait] fork.
+	self wait.
 	lines := OrderedCollection new.
 	lines add: aLineA.
 	lines add: aLineB.
