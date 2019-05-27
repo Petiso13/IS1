@@ -23,37 +23,36 @@ test02PortfolioCanReceiveAccounts
 	portfolio add: account.
 	self assert: (portfolio contains: account).! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 19:41:25'!
-test03AnAccountCanNotBeAddedToASecondPortfolio
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 20:52:40'!
+test03AccountCanBeLinkedToMultiplePortfolios
 
-	| portfolio account anotherPortfolio|
+	| portfolioA portfolioB account |
 	
-	portfolio := Portfolio new.
-	anotherPortfolio := Portfolio new.
+	portfolioA := Portfolio new.
+	portfolioB := Portfolio new.
+	
 	account := ReceptiveAccount new.
-	
-	
-	portfolio add: account.
-	
-	self
-		should: [ anotherPortfolio add: account ]
-		raise: Error 
-		withExceptionDo: [ :anError |
-			self assert: anError messageText = ReceptiveAccount alreadyInAPortfolioErrorDescription ].	
-	! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 18:25:06'!
-test04APortfolioCanBeAddedToAnotherPortfolio
+	portfolioA add: account.
+	portfolioB add: account.
+	
+	self assert: (portfolioA contains: account).
+	self assert: (portfolioB contains: account).! !
 
-	| portfolio account anotherPortfolio|
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 20:54:14'!
+test04APortfolioCanBeAddedToMultiplePortfolio
+
+	| portfolioA portfolioB portfolioC |
 	
-	portfolio := Portfolio new.
-	anotherPortfolio := Portfolio new.
-	account := ReceptiveAccount new.
+	portfolioA := Portfolio new.
+	portfolioB := Portfolio new.
+	portfolioC := Portfolio new.
 	
-	portfolio add: account.
-	anotherPortfolio add: portfolio.
-	self assert: (anotherPortfolio contains: portfolio).
+	portfolioB add: portfolioA.
+	portfolioC add: portfolioA.
+	
+	self assert: (portfolioB contains: portfolioA).
+	self assert: (portfolioC contains: portfolioA).
 ! !
 
 !PortfolioTest methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 18:25:34'!
@@ -70,7 +69,7 @@ test05APortfolioRecognizesInnerAccounts
 	self assert: (anotherPortfolio contains: portfolio).
 	self assert: (anotherPortfolio contains: account).! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 18:54:55'!
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 21:41:07'!
 test06APortfolioCanNotAddItself
 
 	| portfolio |
@@ -80,11 +79,11 @@ test06APortfolioCanNotAddItself
 	self should: [portfolio add: portfolio.]
 	raise: Error
 	withExceptionDo: [ :anError |
-			self assert: anError messageText = Portfolio portfolioCannotContainItselfErrorDescription ].	
+			self assert: anError messageText = Portfolio alreadyInPortfolioErrorDescription ].	
 	
 	! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 19:00:10'!
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 21:22:56'!
 test07PortfolioAcccuratelyCalculatesBalance
 
 	| portfolio account anotherPortfolio|
@@ -98,11 +97,12 @@ test07PortfolioAcccuratelyCalculatesBalance
 	
 	portfolio add: account.
 	anotherPortfolio add: portfolio.
+	self assert: 50 equals: anotherPortfolio balance .
 	self assert: 50 equals: portfolio balance .
 ! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 19:11:34'!
-test08PortfolioRecognizesWhichTranslationsItContains
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 21:20:40'!
+test08PortfolioRecognizesWhichTransactionsItContains
 
 	| portfolio account anotherPortfolio deposit withdraw otherWithdraw|
 	
@@ -139,8 +139,31 @@ test09PortfolioKnowsItsTransactions
 	self assert: (anotherPortfolio transactions includes: deposit).
 ! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 19:49:08'!
-test10APortfolioCanNotBeAddedToTwoDifferentPortfolios
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 21:17:19'!
+test10CanNotAddPortfolioWithRepeatedAccount
+
+	| portfolioA portfolioB portfolioC account |
+	
+	portfolioA := Portfolio new.
+	portfolioB := Portfolio new.
+	portfolioC := Portfolio new.
+	account := ReceptiveAccount new.
+	
+	
+	portfolioB add: account.
+	portfolioC add: account.
+	
+	portfolioA add: portfolioB.
+	self assert: (portfolioA contains: account ).
+	
+	self should: [portfolioA add: portfolioC.]
+	raise: Error
+	withExceptionDo: [ :anError |
+		self assert: anError messageText = Portfolio portfolioContainsAccountErrorDescription ].	
+! !
+
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 21:28:13'!
+test11CanNotAddPortfoliosInCircularManner
 
 	| portfolioA portfolioB portfolioC |
 	
@@ -148,15 +171,14 @@ test10APortfolioCanNotBeAddedToTwoDifferentPortfolios
 	portfolioB := Portfolio new.
 	portfolioC := Portfolio new.
 	
-	
-	portfolioA add: portfolioC.
-	
-	self
-		should: [ portfolioB add: portfolioC ]
-		raise: Error 
-		withExceptionDo: [ :anError |
-			self assert: anError messageText = Portfolio alreadyInAPortfolioErrorDescription ].	
-	! !
+	portfolioB add: portfolioA. 
+	portfolioC add: portfolioB.
+
+	self should: [portfolioA add: portfolioC.]
+	raise: Error
+	withExceptionDo: [ :anError |
+		self assert: anError messageText = Portfolio alreadyInPortfolioErrorDescription ].	
+! !
 
 
 !classDefinition: #ReceptiveAccountTest category: #'Portfolio-Ejercicio'!
@@ -357,27 +379,48 @@ for: aValue
 
 !classDefinition: #Portfolio category: #'Portfolio-Ejercicio'!
 Object subclass: #Portfolio
-	instanceVariableNames: 'accountsAndPortfolios linkedPortfolio'
+	instanceVariableNames: 'accountsAndPortfolios linkedPortfolios'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
-!Portfolio methodsFor: 'initialization' stamp: 'lf 5/26/2019 17:50:10'!
+!Portfolio methodsFor: 'initialization' stamp: 'lf 5/26/2019 20:28:01'!
 initialize
 
+	linkedPortfolios  := OrderedCollection new.
 	accountsAndPortfolios := OrderedCollection new.
 
 	! !
 
 
-!Portfolio methodsFor: 'testing' stamp: 'lf 5/26/2019 18:31:57'!
+!Portfolio methodsFor: 'searching' stamp: 'lf 5/26/2019 21:01:32'!
+accounts
+
+	| portfolios accounts |
+	portfolios := accountsAndPortfolios select: [:a | a isKindOf: Portfolio ].
+	accounts := accountsAndPortfolios select: [:a | a isKindOf: ReceptiveAccount ].
+	portfolios do: [:aPortfolio | accounts addAll: aPortfolio accounts.].
+	^accounts
+
+	! !
+
+!Portfolio methodsFor: 'searching' stamp: 'lf 5/26/2019 20:42:55'!
 contains: accountOrPortfolio
 
 	^(accountsAndPortfolios includes: accountOrPortfolio) or: (self searchPortfoliosFor: accountOrPortfolio).
 
 	! !
 
-!Portfolio methodsFor: 'testing' stamp: 'lf 5/26/2019 18:29:00'!
+!Portfolio methodsFor: 'searching' stamp: 'lf 5/26/2019 21:33:28'!
+searchLinkedPortfoliosFor: accountOrPortfolio
+
+	linkedPortfolios isEmpty ifTrue: [^(self = accountOrPortfolio) or: (self contains: accountOrPortfolio)].
+	^linkedPortfolios anySatisfy: [:a | a searchLinkedPortfoliosFor: accountOrPortfolio].
+	
+
+	! !
+
+!Portfolio methodsFor: 'searching' stamp: 'lf 5/26/2019 18:29:00'!
 searchPortfoliosFor: accountOrPortfolio
 
 	| portfolios |
@@ -387,7 +430,7 @@ searchPortfoliosFor: accountOrPortfolio
 	! !
 
 
-!Portfolio methodsFor: 'portfolio' stamp: 'lf 5/26/2019 19:46:05'!
+!Portfolio methodsFor: 'portfolio' stamp: 'lf 5/26/2019 21:14:52'!
 add: accountOrPortfolio
 
 	accountOrPortfolio linkToAPortfolio: self.
@@ -395,12 +438,14 @@ add: accountOrPortfolio
 
 	! !
 
-!Portfolio methodsFor: 'portfolio' stamp: 'lf 5/26/2019 19:50:29'!
+!Portfolio methodsFor: 'portfolio' stamp: 'lf 5/26/2019 21:41:29'!
 linkToAPortfolio: aPortfolio
 
-	linkedPortfolio ifNotNil: [self error: Portfolio alreadyInAPortfolioErrorDescription ].
-	self = aPortfolio ifTrue: [self error: Portfolio portfolioCannotContainItselfErrorDescription ].
-	linkedPortfolio := aPortfolio.! !
+	| hasAccount |
+	(aPortfolio searchLinkedPortfoliosFor: self) ifTrue: [self error: Portfolio alreadyInPortfolioErrorDescription ].
+	hasAccount := self accounts anySatisfy: [:account | aPortfolio searchLinkedPortfoliosFor: account].
+	hasAccount ifTrue: [self error: Portfolio portfolioContainsAccountErrorDescription ].
+	linkedPortfolios add: aPortfolio.! !
 
 !Portfolio methodsFor: 'portfolio' stamp: 'lf 5/26/2019 19:42:16'!
 linkedPortfolio
@@ -436,28 +481,29 @@ transactions
 Portfolio class
 	instanceVariableNames: ''!
 
-!Portfolio class methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 19:40:47'!
-alreadyInAPortfolioErrorDescription
+!Portfolio class methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 21:25:52'!
+alreadyInPortfolioErrorDescription
 
-	^'This portfolio is already a part of a different portfolio.'! !
+	^'This portfolio already belongs to this portfolio.'! !
 
-!Portfolio class methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 18:53:59'!
-portfolioCannotContainItselfErrorDescription
+!Portfolio class methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 21:14:23'!
+portfolioContainsAccountErrorDescription
 
-	^'A portfolio can not contain itself'! !
+	^'Cant add to porfolio due to repeated accounts.'! !
 
 
 !classDefinition: #ReceptiveAccount category: #'Portfolio-Ejercicio'!
 Object subclass: #ReceptiveAccount
-	instanceVariableNames: 'transactions linkedPortfolio'
+	instanceVariableNames: 'transactions linkedPortfolios'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
-!ReceptiveAccount methodsFor: 'initialization' stamp: 'HernanWilkinson 7/13/2011 18:35'!
+!ReceptiveAccount methodsFor: 'initialization' stamp: 'lf 5/26/2019 20:50:30'!
 initialize
 
 	super initialize.
+	linkedPortfolios := OrderedCollection new.
 	transactions := OrderedCollection new.! !
 
 
@@ -482,18 +528,18 @@ balance
 	^balance! !
 
 
-!ReceptiveAccount methodsFor: 'testing' stamp: 'HAW 10/11/2018 16:53:54'!
+!ReceptiveAccount methodsFor: 'searching' stamp: 'HAW 10/11/2018 16:53:54'!
 hasRegistered: aTtransaction
 
 	^ transactions includes: aTtransaction 
 ! !
 
 
-!ReceptiveAccount methodsFor: 'portfolio' stamp: 'lf 5/26/2019 19:50:54'!
+!ReceptiveAccount methodsFor: 'portfolio' stamp: 'lf 5/26/2019 20:49:04'!
 linkToAPortfolio: aPortfolio
 
-	linkedPortfolio ifNotNil: [self error: ReceptiveAccount alreadyInAPortfolioErrorDescription ].
-	linkedPortfolio := aPortfolio.! !
+	(aPortfolio searchLinkedPortfoliosFor: self) ifTrue: [self error: ReceptiveAccount alreadyInPortfolioErrorDescription ].
+	linkedPortfolios add: aPortfolio.! !
 
 !ReceptiveAccount methodsFor: 'portfolio' stamp: 'lf 5/26/2019 19:34:54'!
 linkedPortfolio 
@@ -506,7 +552,7 @@ linkedPortfolio
 ReceptiveAccount class
 	instanceVariableNames: ''!
 
-!ReceptiveAccount class methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 19:40:27'!
-alreadyInAPortfolioErrorDescription
+!ReceptiveAccount class methodsFor: 'as yet unclassified' stamp: 'lf 5/26/2019 20:44:55'!
+alreadyInPortfolioErrorDescription
 
-	^'This account already belongs to a portfolio'! !
+	^'This account already belongs to this portfolio'! !
