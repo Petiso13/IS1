@@ -253,6 +253,14 @@ TestCase subclass: #StoreTest
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
+!StoreTest methodsFor: 'as yet unclassified' stamp: 'lf 6/23/2019 20:19:09'!
+debit: anAmount from: aCreditCard
+
+	| debitBehavior |
+	debitBehavior := [ :amount :creditCard | ].
+	
+	^debitBehavior value: anAmount value: aCreditCard. ! !
+
 !StoreTest methodsFor: 'as yet unclassified' stamp: 'lf 6/12/2019 21:44:04'!
 setUp
 
@@ -272,10 +280,99 @@ test01CartIsCreatedEmpty
 	
 	self assert: (store listCart: cartId) isEmpty.! !
 
+!StoreTest methodsFor: 'as yet unclassified' stamp: 'lf 6/21/2019 18:44:12'!
+test02StoreCanAddItemsToExistingCart
+
+	| store clientId password cartId |
+
+	clientId := '1'.
+	password := 'dummyHash'.
+
+	store := Store with: testObjectsFactory defaultCatalog and: SimulatedPasswordValidator new.
+	cartId := store createCartFor: clientId with: password.
+	
+	store addToCart: cartId item: testObjectsFactory itemSellByTheStore quantity: 1.
+	self assert: ((store listCart: cartId) includes: testObjectsFactory itemSellByTheStore).! !
+
+!StoreTest methodsFor: 'as yet unclassified' stamp: 'lf 6/23/2019 20:23:58'!
+test03StoreCanCheckoutExistingCart
+
+	| store clientId password cartId creditCard |
+
+	clientId := '1'.
+	password := 'dummyHash'.
+
+	store := Store with: testObjectsFactory defaultCatalog and: SimulatedPasswordValidator new.
+	cartId := store createCartFor: clientId with: password.
+	
+	store addToCart: cartId item: testObjectsFactory itemSellByTheStore quantity: 1.
+	creditCard := testObjectsFactory notExpiredCreditCard.
+	store checkout: cartId throught: self with: creditCard.
+	
+	self assert: store sales size = 1.! !
+
+!StoreTest methodsFor: 'as yet unclassified' stamp: 'lf 6/23/2019 21:25:25'!
+test04ListPurchasesReturnsThePurchasesMade
+
+	| store clientId password cartId creditCard quantity passwordValidator |
+
+	clientId := '1'.
+	password := 'dummyHash'.
+	quantity := 14.
+
+	passwordValidator := SimulatedPasswordValidator new.
+	store := Store with: testObjectsFactory defaultCatalog and: passwordValidator.
+	cartId := store createCartFor: clientId with: password.
+	
+	store addToCart: cartId item: testObjectsFactory itemSellByTheStore quantity: quantity.
+	creditCard := testObjectsFactory notExpiredCreditCard.
+	store checkout: cartId throught: self with: creditCard.
+	
+	self assert: (store listPurchasesFor: clientId password: password) size equals: quantity.
+	! !
+
+!StoreTest methodsFor: 'as yet unclassified' stamp: 'lf 6/23/2019 21:24:29'!
+test05StoreValidatesPasswords
+
+	| store clientId password passwordValidator |
+
+	clientId := '1'.
+	password := 'dummyHash'.
+
+	passwordValidator := SimulatedPasswordValidator new.
+	passwordValidator shouldAcceptPassword: false.
+	store := Store with: testObjectsFactory defaultCatalog and: passwordValidator.
+	
+	self 
+		should: [ store createCartFor: clientId with: password. ]
+		raise: Error
+		withExceptionDo: [ :anError | self assert: anError messageText = Store invalidUserOrPasswordErrorDescription.]! !
+
+!StoreTest methodsFor: 'as yet unclassified' stamp: 'lf 6/23/2019 21:59:39'!
+test06CartExpiresAfter30Minutes
+
+	| store clientId password passwordValidator cartId cart |
+
+	clientId := '1'.
+	password := 'dummyHash'.
+
+	passwordValidator := SimulatedPasswordValidator new.
+	passwordValidator shouldAcceptPassword: true.
+	store := Store with: testObjectsFactory defaultCatalog and: passwordValidator.
+	cartId := store createCartFor: clientId with: password.
+	cart := store getCart: cartId.
+	cart setCreationDate: DateAndTime yesterday.
+	
+	self 
+		should: [ store listCart: cartId. ]
+		raise: Error
+		withExceptionDo: [ :anError | self assert: anError messageText = Store expiredCartErrorDescription.]
+		! !
+
 
 !classDefinition: #Cart category: #TusLibros!
 Object subclass: #Cart
-	instanceVariableNames: 'catalog items'
+	instanceVariableNames: 'catalog items creationDate'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
@@ -302,11 +399,12 @@ assertIsValidQuantity: aQuantity
 	aQuantity strictlyPositive ifFalse: [ self error: self invalidQuantityErrorMessage ]! !
 
 
-!Cart methodsFor: 'initialization' stamp: 'HernanWilkinson 6/17/2013 17:48'!
+!Cart methodsFor: 'initialization' stamp: 'lf 6/23/2019 21:28:54'!
 initializeAcceptingItemsOf: aCatalog
 
 	catalog := aCatalog.
-	items := OrderedCollection new.! !
+	items := OrderedCollection new.
+	creationDate := DateAndTime now.! !
 
 
 !Cart methodsFor: 'queries' stamp: 'HernanWilkinson 6/17/2013 17:45'!
@@ -314,6 +412,11 @@ occurrencesOf: anItem
 
 	^items occurrencesOf: anItem  ! !
 
+
+!Cart methodsFor: 'testing' stamp: 'lf 6/23/2019 21:41:16'!
+creationDate
+	
+	^creationDate. ! !
 
 !Cart methodsFor: 'testing' stamp: 'HernanWilkinson 6/17/2013 17:44'!
 includes: anItem
@@ -324,6 +427,10 @@ includes: anItem
 isEmpty
 	
 	^items isEmpty ! !
+
+!Cart methodsFor: 'testing' stamp: 'lf 6/23/2019 21:29:34'!
+setCreationDate: aDate.
+	creationDate := aDate. ! !
 
 
 !Cart methodsFor: 'total' stamp: 'HernanWilkinson 6/17/2013 19:09'!
@@ -517,25 +624,135 @@ of: aTotal
 
 !classDefinition: #SimulatedPasswordValidator category: #TusLibros!
 Object subclass: #SimulatedPasswordValidator
-	instanceVariableNames: 'testObjectsFactory'
+	instanceVariableNames: 'acceptPassword'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!SimulatedPasswordValidator methodsFor: 'as yet unclassified' stamp: 'lf 6/12/2019 21:50:43'!
+!SimulatedPasswordValidator methodsFor: 'as yet unclassified' stamp: 'lf 6/23/2019 21:12:37'!
+initialize
+
+	acceptPassword := true.
+! !
+
+!SimulatedPasswordValidator methodsFor: 'as yet unclassified' stamp: 'lf 6/23/2019 21:13:12'!
+shouldAcceptPassword: aBoolean
+
+	acceptPassword := aBoolean.! !
+
+!SimulatedPasswordValidator methodsFor: 'as yet unclassified' stamp: 'lf 6/23/2019 21:13:31'!
 validate: aClientId with: aPassword
 
-	^true.! !
+	^acceptPassword.! !
 
 
 !classDefinition: #Store category: #TusLibros!
 Object subclass: #Store
-	instanceVariableNames: 'carts clients lastCartId clientCartIds catalog passwordValidator'
+	instanceVariableNames: 'carts clients lastCartId clientCartIds catalog salesBook passwordValidator clientPurchases'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!Store methodsFor: 'as yet unclassified' stamp: 'lf 6/12/2019 22:00:46'!
+!Store methodsFor: 'testing' stamp: 'lf 6/23/2019 21:38:30'!
+getCart: aCartId
+
+	| cart | 
+
+	cart := carts at: aCartId ifAbsent: [self error: Store invalidCartErrorDescription]. 
+	^cart.! !
+
+!Store methodsFor: 'testing' stamp: 'lf 6/23/2019 20:11:28'!
+sales
+
+	^salesBook.! !
+
+
+!Store methodsFor: 'validation' stamp: 'lf 6/23/2019 21:22:35'!
+validate: aClientId with: aPassword
+	
+	(passwordValidator validate: aClientId with: aPassword) ifFalse:[self error: Store invalidUserOrPasswordErrorDescription].! !
+
+!Store methodsFor: 'validation' stamp: 'lf 6/23/2019 21:56:58'!
+validateCartExpiration: aCartId
+
+	| cart | 
+
+	cart := carts at: aCartId ifAbsent: [self error: Store invalidCartErrorDescription]. 
+	((cart creationDate + 30minutes) < DateAndTime now) ifTrue:[self error: Store expiredCartErrorDescription].! !
+
+
+!Store methodsFor: 'interface' stamp: 'lf 6/23/2019 21:58:10'!
+addToCart: aCartId item: anItem quantity: aQuantity
+
+	| cart | 
+	self validateCartExpiration: aCartId.
+	cart := carts at: aCartId ifAbsent: [self error: Store invalidCartErrorDescription].
+	cart add: aQuantity of: anItem.! !
+
+!Store methodsFor: 'interface' stamp: 'lf 6/23/2019 21:58:19'!
+checkout: aCartId throught: aMerchantProcessor with: aCreditCard
+
+	| cashier cart purchases clientId |
+	self validateCartExpiration: aCartId.
+	cart := carts at: aCartId ifAbsent: [self error: Store invalidCartErrorDescription].
+	cashier:= Cashier 
+		toCheckout: cart
+		charging: aCreditCard
+		throught: aMerchantProcessor
+		on: DateAndTime now
+		registeringOn: salesBook.
+	
+	cashier checkOut.
+	
+	purchases := cart items.
+	
+	clientId := self getClientIdFromCartId: aCartId.
+	self addPurchases: purchases to: clientId.
+	
+"	
+	(clientPurchases includesKey: aClientId) ifFalse:[clientCartIds at: aClientId put: OrderedCollection new].
+	(clientCartIds at: aClientId) add: lastCartId.
+"! !
+
+!Store methodsFor: 'interface' stamp: 'lf 6/23/2019 21:20:32'!
+createCartFor: aClientId with: aPassword
+
+	| cart cartId |
+	
+	self validate: aClientId with: aPassword.
+	cart := Cart acceptingItemsOf: catalog.
+	cartId := self addCart: cart for: aClientId.
+	^cartId.! !
+
+!Store methodsFor: 'interface' stamp: 'lf 6/23/2019 21:58:27'!
+listCart: aCartId
+
+	| cart | 
+	self validateCartExpiration: aCartId.
+	cart := carts at: aCartId ifAbsent: [self error: Store invalidCartErrorDescription]. 
+	^cart items.! !
+
+!Store methodsFor: 'interface' stamp: 'lf 6/23/2019 21:22:13'!
+listPurchasesFor: aClientId password: aPassword
+	
+	self validate: aClientId with: aPassword.
+	^clientPurchases at: aClientId ifAbsent:[^OrderedCollection new].! !
+
+
+!Store methodsFor: 'initialization' stamp: 'lf 6/23/2019 20:35:55'!
+initializeAcceptingItemsOf: aCatalog with: aPasswordValidator
+
+	passwordValidator := aPasswordValidator.
+	lastCartId := 0.
+	catalog := aCatalog.
+	carts := Dictionary new.
+	clients := Dictionary new.
+	clientCartIds := Dictionary new.
+	clientPurchases := Dictionary new.
+	salesBook := OrderedCollection new.! !
+
+
+!Store methodsFor: 'internal' stamp: 'lf 6/23/2019 21:33:45'!
 addCart: cart for: aClientId
 
 	lastCartId := lastCartId + 1.
@@ -544,39 +761,27 @@ addCart: cart for: aClientId
 	(clientCartIds at: aClientId) add: lastCartId.
 	^lastCartId.! !
 
-!Store methodsFor: 'as yet unclassified' stamp: 'lf 6/12/2019 21:55:04'!
-createCartFor: aClientId with: aPassword
+!Store methodsFor: 'internal' stamp: 'lf 6/23/2019 21:07:37'!
+addPurchases: purchases to: aClientId
 
-	| cart cartId |
-	
-	passwordValidator validate: aClientId with: aPassword.
-	cart := Cart acceptingItemsOf: catalog.
-	cartId := self addCart: cart for: aClientId.
-	^cartId.! !
+	(clientPurchases includesKey: aClientId) ifFalse:[clientPurchases at: aClientId put: OrderedCollection new].
+	(clientPurchases at: aClientId) addAll: purchases.! !
 
-!Store methodsFor: 'as yet unclassified' stamp: 'lf 6/12/2019 21:51:49'!
-initializeAcceptingItemsOf: aCatalog with: aPasswordValidator
+!Store methodsFor: 'internal' stamp: 'lf 6/23/2019 21:04:11'!
+getClientIdFromCartId: aCartId
 
-	passwordValidator := aPasswordValidator.
-	lastCartId := 0.
-	catalog := aCatalog.
-	carts := Dictionary new.
-	clients := Dictionary new.
-	clientCartIds := Dictionary new.! !
-
-!Store methodsFor: 'as yet unclassified' stamp: 'lf 6/12/2019 21:49:05'!
-listCart: aCartId
-
-	| cart | 
-
-	cart := carts at: aCartId ifAbsent: [self error: Store invalidCartErrorDescription]. 
-	^cart items.! !
+	^(clientCartIds select:[:cartIds | cartIds includes: aCartId]) keys first.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Store class' category: #TusLibros!
 Store class
 	instanceVariableNames: ''!
+
+!Store class methodsFor: 'as yet unclassified' stamp: 'lf 6/23/2019 21:57:21'!
+expiredCartErrorDescription
+
+	^'This cart has already expired.'! !
 
 !Store class methodsFor: 'as yet unclassified' stamp: 'lf 6/12/2019 21:49:22'!
 invalidCartErrorDescription
